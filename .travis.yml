@@ -1,5 +1,11 @@
 language: emacs-lisp
-dist: focal
+env:
+  matrix:
+    - DOCKER_IMAGE=silex/emacs:24.5-dev
+    - DOCKER_IMAGE=silex/emacs:27.1-dev
+
+services:
+  - docker
 before_install:
-  - sudo apt-get -y install make emacs
-script: make test
+  - docker pull ${DOCKER_IMAGE}
+script: docker run -it --mount type=bind,source=`pwd`,target=/init-loader --rm ${DOCKER_IMAGE} bash -c 'cd /init-loader && make test'
